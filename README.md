@@ -41,7 +41,7 @@ DocFormatter enforces it everywhere.
 - 🎯 Automatically apply a defined style to any `.docx` document
 - 🎯 Support for Google Docs via the official REST API
 - 🎯 Configurable via `.docformatterrc` or `docformatter.config.js`
-- 🎯 Pluggable rule system - write and share your own formatting rules
+- 🎯 Advanced Scripting: Write complex formatting logic in **Lua** (safe & fast)
 - 🎯 CLI with `format` and `check` commands
 - 🎯 CI/CD friendly - exit with non-zero code if document is not formatted
 - 🎯 Never touch content - only formatting, never text
@@ -69,12 +69,32 @@ DocFormatter enforces it everywhere.
 
 ---
 
+## Extensibility: Powered by Lua 🌙
+
+While basic rules (font, margins) are configured in JSON, complex logic needs a real language.
+DocFormatter embeds a lightweight **Lua** engine to let you write custom checks without security risks.
+
+**Example Custom Rule (`rules/legal-headers.lua`):**
+```lua
+-- If a paragraph starts with "Section X.Y", make it Bold + Uppercase
+function check_paragraph(text, style)
+  if text:match("^Section %d+%.%d+") then
+    style.bold = true
+    style.caps = true
+    return style
+  end
+end
+```
+
+---
+
 ## Planned Tech Stack (under review)
 
 ### Core
 - **Runtime**: Node.js + TypeScript
 - **`.docx` parsing**: [`docxtemplater`](https://github.com/open-xml-templating/docxtemplater) + [`pizzip`](https://github.com/open-xml-templating/pizzip)
 - **XML processing**: [`fast-xml-parser`](https://github.com/NaturalIntelligence/fast-xml-parser) for OOXML manipulation
+- **Plugin Engine**: **Lua** (via [`wasmoon`](https://github.com/ceifa/wasmoon) - WebAssembly) for user-defined rules
 - **Google Docs**: [Google Docs REST API v1](https://developers.google.com/docs/api)
 - **CLI**: [`commander.js`](https://github.com/tj/commander.js)
 - **Config resolution**: [`cosmiconfig`](https://github.com/cosmiconfig/cosmiconfig) (same as Prettier)
